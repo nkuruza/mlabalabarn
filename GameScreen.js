@@ -25,6 +25,7 @@ const Form = t.form.Form;
 export default class GameScreen extends Component<Props>{
     static navigationOptions = {
         title: 'Game',
+        header: null
       };
     constructor(props) {
         super(props);
@@ -45,7 +46,9 @@ export default class GameScreen extends Component<Props>{
         if (this.state.dimensions) {
             var { dimensions } = this.state;
             var { width, height } = dimensions;
-            var top = 0, left = 0, boardWidth = width * 0.8, boardHeight = height * 0.8;
+            var boardWidth = width * 0.8, boardHeight = height * 0.8;
+            var top = ((height - boardHeight) / 2) * 0.8;
+            var left = ((width - boardWidth) / 2) * 0.8;
             var plots = [];
             plots["0,0"] = [left, top];
             plots["1,0"] = [left + boardWidth / 2, top];
@@ -56,11 +59,12 @@ export default class GameScreen extends Component<Props>{
             plots["0,2"] = [left, top + boardHeight];
             plots["1,2"] = [left + boardWidth / 2, top + boardHeight];
             plots["2,2"] = [left + boardWidth, top + boardHeight];
-            
+            console.log(boardWidth)
             
             
             //console.log(Object.keys(plots))
         }
+        console.log(boardWidth)
         return (
             <View style={[StyleSheet.absoluteFill, styles.container]} onLayout={this.onLayout}>
             { 
@@ -100,9 +104,8 @@ export default class GameScreen extends Component<Props>{
                             return <Circle
                                 cx={plots[key][0]}
                                 cy={plots[key][1]}
-                                r="45"
+                                r={(boardWidth > boardHeight ? boardHeight : boardWidth) / 50}
                                 stroke="blue"
-                                strokeWidth="2.5"
                                 fill="green"
                             />
                         })
