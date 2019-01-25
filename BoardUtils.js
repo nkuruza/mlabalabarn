@@ -24,7 +24,7 @@ var getLineKey = line => {
 var getLines = plots => {
     var lines = [];
     var linekeys = [];
-    for(i = 0; i < plots.length; i++){
+    for(var i = 0; i < plots.length; i++){
         for(j = 0; j < plots[i].length; j++){
             if((j < plots[i].length - 1)){
                 line = {
@@ -32,6 +32,8 @@ var getLines = plots => {
                     y1: plots[i][j].y,
                     x2: plots[i][j + 1].x,
                     y2: plots[i][j + 1].y,
+                    plot1: {x: i, y: j},
+                    plot2: {x: i, y: j + 1}
                 }
                 lines.push(line);
                 

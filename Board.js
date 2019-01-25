@@ -19,8 +19,34 @@ export default class Board extends Component<Props>{
     onChange(value) {
         this.setState({value: value});
     }
+    move(x, y){
+        var {board, selected} = this.state;
+        if(this.findLine(board.lines, board.plots[selected.x][selected.y], board.plots[x][y]))
+        {
+            let occupant = board.plots[selected.x][selected.y].occupant;
+            occupant.selected = false;
+            board.plots[selected.x][selected.y].occupant = null;
+            board.plots[x][y].occupant = occupant
+            this.setState({board: board, selected: undefined})
+        }
+    }
+    findLine(lines, plot1, plot2){
+        //console.log(lines)
+        console.log(plot1.index)
+        console.log(plot2.index)
+        for(line of lines){
+            //console.log(line)
+            if((line.plot1.x == plot1.index.x && line.plot1.y == plot1.index.y &&  line.plot2.x == plot2.index.x && line.plot2.y == plot2.index.y) ||
+            (line.plot1.x == plot2.index.x && line.plot1.y == plot2.index.y &&  line.plot2.x == plot1.index.x && line.plot2.y == plot1.index.y)){
+                return line;
+            }
+        }
+        console.log('line not found')
+        console.log(lines)
+        return undefined;
+    }
+    
     onPressSpot(x, y){
-        //console.log(x + "," + y)
         var {board, hand, selected} = this.state;
         if(!selected){
             if(!board.plots[x][y].occupant && hand > 0){
@@ -32,11 +58,11 @@ export default class Board extends Component<Props>{
             }
             this.setState({board: board, hand: hand})
         }
+        else
+            this.move(x,y);
     }
     onPressPiece(x, y){
         var {board, hand, selected} = this.state;
-        
-        
         if (selected){
             board.plots[selected.x][selected.y].occupant.selected = false;
         }
@@ -48,7 +74,6 @@ export default class Board extends Component<Props>{
         if (this.state.dimensions) return // layout was already called
         let {width, height} = event.nativeEvent.layout
         this.setState({dimensions: {width, height}, board: getBoard({width, height})});
-
       }
     render() {
         if (this.state.dimensions) {
@@ -57,9 +82,8 @@ export default class Board extends Component<Props>{
 
             var { width, height } = dimensions;
             var plotR = (board.width > board.height ? board.height : board.width) / 50;
-            var occupantR = plotR * 4;
+            var occupantR = plotR * 3;
             var thiz = this; // HACK
-            console.log(board);
         }
         return (
             <View style={[StyleSheet.absoluteFill, styles.container]} onLayout={this.onLayout}>
@@ -104,12 +128,9 @@ export default class Board extends Component<Props>{
                                                     : undefined
                                         }
                                     </G>
-                            
-                            
                         })
                     }
-                   
-                    </Svg>
+                                       </Svg>
                 : undefined
             }
             
