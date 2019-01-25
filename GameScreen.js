@@ -1,26 +1,9 @@
 import React, {Component} from 'react';
-import t from 'tcomb-form-native';
 import {View, StyleSheet } from 'react-native';
-import Svg,{Rect, Line, Circle} from 'react-native-svg'
-import styles from './style.js'
+import Svg,{Rect, Line, Circle} from 'react-native-svg';
+import styles from './style.js';
 
 type Props = {};
-const User = t.struct({
-    username: t.String
-});
-var options = {
-    label: 'User Details',
-    auto: 'placeholders',
-    fields:{
-        password: {
-            secureTextEntry: true
-        }
-    }
-}
-
-
-
-const Form = t.form.Form;
 
 export default class GameScreen extends Component<Props>{
     static navigationOptions = {
