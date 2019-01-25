@@ -10,7 +10,7 @@ var getPlots = (top, left, boardWidth, boardHeight) =>{
                 x: left + (j == 1 ? boardWidth / 2 : (j == 2 ? boardWidth : 0)),
                 y: top + (i == 1 ? boardHeight / 2 : (i == 2 ? boardHeight : 0)),
                 occupant:null,
-                index:{x: i, y: j}
+                index:{x: j, y: i}
             }
         }
     }

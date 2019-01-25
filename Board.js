@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {View, StyleSheet } from 'react-native';
-import Svg,{Line, Circle, G, } from 'react-native-svg';
+import Svg,{Line, Circle, G, Text, } from 'react-native-svg';
 import styles from './style.js';
 import { getBoard } from './BoardUtils.js';
 
+const MAXPIECES = 3;
 type Props = {};
 
 export default class Board extends Component<Props>{
@@ -13,7 +14,7 @@ export default class Board extends Component<Props>{
       };
     constructor(props) {
         super(props);
-        this.state = {dimensions: undefined, board: undefined, hand: 3}; 
+        this.state = {dimensions: undefined, board: undefined, hand: MAXPIECES}; 
         this.onPressSpot = this.onPressSpot.bind(this)
     }
     onChange(value) {
@@ -21,19 +22,18 @@ export default class Board extends Component<Props>{
     }
     move(x, y){
         var {board, selected} = this.state;
-        if(this.findLine(board.lines, board.plots[selected.x][selected.y], board.plots[x][y]))
+        if(this.findLine(board.lines, board.plots[selected.y][selected.x], board.plots[y][x]))
         {
-            let occupant = board.plots[selected.x][selected.y].occupant;
+            let occupant = board.plots[selected.y][selected.x].occupant;
             occupant.selected = false;
-            board.plots[selected.x][selected.y].occupant = null;
-            board.plots[x][y].occupant = occupant
+            board.plots[selected.y][selected.x].occupant = null;
+            board.plots[y][x].occupant = occupant
             this.setState({board: board, selected: undefined})
         }
+
     }
     findLine(lines, plot1, plot2){
-        //console.log(lines)
-        console.log(plot1.index)
-        console.log(plot2.index)
+        
         for(line of lines){
             //console.log(line)
             if((line.plot1.x == plot1.index.x && line.plot1.y == plot1.index.y &&  line.plot2.x == plot2.index.x && line.plot2.y == plot2.index.y) ||
@@ -41,16 +41,38 @@ export default class Board extends Component<Props>{
                 return line;
             }
         }
-        console.log('line not found')
-        console.log(lines)
         return undefined;
     }
-    
+    checkForGun(){
+        var peices = [];
+        var {board, hand} = this.state;
+        if(MAXPIECES - hand < 3) return;
+        var x = 0, y = 0, z = 0;
+        for(i = 0; i < board.plots.length; i++){
+            for(j = 0; j < board.plots[i].length; j++){
+                if(board.plots[i][j].occupant && board.plots[i][j].occupant.player == 1){
+                    peices.push(board.plots[i][j].index);
+                }
+            }
+        }
+        if(peices[0].x == peices[1].x && peices[0].x == peices[2].x){
+            console.log("Guuuuuun");
+        }
+        if(peices[0].y == peices[1].y && peices[0].y == peices[2].y){
+            console.log("Guuuuuun");
+        }
+        if(peices[0].y == peices[0].x && peices[1].y == peices[1].x && peices[2].y == peices[2].x){
+            console.log("Guuuuuun");
+        }
+        if(peices[0].y == peices[2].x && peices[1].y == peices[1].x && peices[2].y == peices[0].x){
+            console.log("Guuuuuun");
+        }
+    }
     onPressSpot(x, y){
         var {board, hand, selected} = this.state;
         if(!selected){
-            if(!board.plots[x][y].occupant && hand > 0){
-                board.plots[x][y].occupant = {
+            if(!board.plots[y][x].occupant && hand > 0){
+                board.plots[y][x].occupant = {
                     player: 1,
                     selected: false
                 }
@@ -60,15 +82,17 @@ export default class Board extends Component<Props>{
         }
         else
             this.move(x,y);
+        this.checkForGun();
     }
     onPressPiece(x, y){
         var {board, hand, selected} = this.state;
+        if (hand > 0) return;
         if (selected){
-            board.plots[selected.x][selected.y].occupant.selected = false;
+            board.plots[selected.y][selected.x].occupant.selected = false;
         }
-        board.plots[x][y].occupant.selected = true;
+        board.plots[y][x].occupant.selected = true;
         
-        this.setState({board: board, hand: hand, selected:{x,y}})
+        this.setState({board: board, selected:{x,y}})
     }
     onLayout = event => {
         if (this.state.dimensions) return // layout was already called
@@ -113,7 +137,6 @@ export default class Board extends Component<Props>{
                                             fill="green"
                                             onPress={() => thiz.onPressSpot(plots[key].index.x, plots[key].index.y)}
                                         />
-                                        
                                         {
                                             plots[key].occupant ?
                                                     <Circle
