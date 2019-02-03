@@ -47,7 +47,6 @@ export default class Board extends Component<Props>{
         var peices = [];
         var {board, hand} = this.state;
         if(MAXPIECES - hand < 3) return;
-        var x = 0, y = 0, z = 0;
         for(i = 0; i < board.plots.length; i++){
             for(j = 0; j < board.plots[i].length; j++){
                 if(board.plots[i][j].occupant && board.plots[i][j].occupant.player == 1){
