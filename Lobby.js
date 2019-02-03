@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Text, View, TouchableOpacity, FlatList} from 'react-native'
+import { Text, View, TouchableOpacity, FlatList } from 'react-native'
 import { getLobbyPlayers } from './MlabaApi';
 
 type Props = {};
@@ -35,9 +35,9 @@ export default class Lobby extends Component<Props>{
         super(props);
         this.state = { data: [] }
     }
-    componentDidMount(){
-        getLobbyPlayers().then(response =>{
-this.setState({ data: response})
+    componentDidMount() {
+        getLobbyPlayers().then(response => {
+            this.setState({ data: response })
         });
     }
     _renderItem = ({ item }) => (
