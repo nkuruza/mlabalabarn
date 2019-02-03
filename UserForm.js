@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import t from 'tcomb-form-native';
-import {TouchableHighlight, Text, View} from 'react-native';
+import { TouchableHighlight, Text, View } from 'react-native';
 import styles from './style.js'
 import { addPlayerApi } from './MlabaApi.js';
 
@@ -14,7 +14,7 @@ const User = t.struct({
 var options = {
     label: 'User Details',
     auto: 'placeholders',
-    fields:{
+    fields: {
         password: {
             secureTextEntry: true
         }
@@ -26,35 +26,34 @@ const Form = t.form.Form;
 export default class UserForm extends Component<Props>{
     static navigationOptions = {
         title: 'Welcome',
-      };
+    };
     constructor(props) {
         super(props);
         this.state = { value: null, deviceId: null };
         this.onChange = this.onChange.bind(this)
     }
-    componentDidMount(){
+    componentDidMount() {
         var id = DeviceInfo.default.getUniqueID();
-        this.setState({deviceId: id});
+        this.setState({ deviceId: id });
     }
     onChange(value) {
-        this.setState({value: value});
+        this.setState({ value: value });
     }
-    onPress = () =>{
-        
-        addPlayerApi({name: this.state.value.name, deviceId: id})
+    onPress = () => {
+        addPlayerApi({ name: this.state.value.name, deviceId: this.state.deviceId })
             .then(response => {
-                if(response.id > 0)
-                this.props.navigation.navigate("Lobby");
+                if (response.id > 0)
+                    this.props.navigation.navigate("Lobby");
             });
-        }
-        render() {
-            return (
+    }
+    render() {
+        return (
             <View style={styles.container}>
                 <Form ref="form"
-                 onChange={this.onChange}
-                 value={this.state.value} 
-                 type={User} 
-                 options={options}/>
+                    onChange={this.onChange}
+                    value={this.state.value}
+                    type={User}
+                    options={options} />
                 <TouchableHighlight style={styles.button} onPress={this.onPress} underlayColor='#99d9f4'>
                     <Text style={styles.buttonText}>Save</Text>
                 </TouchableHighlight>
