@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import t from 'tcomb-form-native';
 import { TouchableHighlight, Text, View } from 'react-native';
 import styles from './style.js'
-import { addPlayerApi, getPlayerByDevice } from './MlabaApi.js';
+import { MlabaApi } from './MlabaApi.js';
 import { StorageHelper} from './Storage';
 
 
@@ -40,7 +40,7 @@ export default class UserForm extends Component<Props>{
         this.checkPlayer(id);
     }
     checkPlayer(id){
-        getPlayerByDevice(id)
+        MlabaApi.getPlayerByDevice(id)
             .then( response => {
                 //console.log(response);
                 if(response && response.id > 0){
@@ -53,7 +53,7 @@ export default class UserForm extends Component<Props>{
         this.setState({ value: value });
     }
     onPress = () => {
-        addPlayerApi({ name: this.state.value.name, deviceId: this.state.deviceId })
+        MlabaApi.addPlayerApi({ name: this.state.value.name, deviceId: this.state.deviceId })
             .then(response => {
                 if (response.id > 0){
                     StorageHelper.put("player", response);

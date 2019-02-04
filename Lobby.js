@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity, FlatList } from 'react-native'
-import { getLobbyPlayers, joinLobby } from './MlabaApi';
+import { MlabaApi } from './MlabaApi';
 import { StorageHelper } from './Storage';
 
 type Props = {};
@@ -38,9 +38,9 @@ export default class Lobby extends Component<Props>{
     }
     componentDidMount() {
         StorageHelper.get("player").then((player => {
-            joinLobby(player.id);
+            MlabaApi.joinLobby(player.id);
         }));
-        getLobbyPlayers().then(response => {
+        MlabaApi.getLobbyPlayers().then(response => {
             this.setState({ data: response })
         });
     }

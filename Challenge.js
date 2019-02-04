@@ -13,7 +13,7 @@ export default class Challenge extends Component<Props>{
     }
     onPress = () => {
         if (this.state.player.id != this.state.opponent.id)
-            challenge(this.state.player.id, this.state.opponent.id)
+            MlabaApi.challenge(this.state.player.id, this.state.opponent.id)
         else
             alert('can\'t challenge self')
     }
