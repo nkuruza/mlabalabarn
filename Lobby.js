@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity, FlatList } from 'react-native'
-import { getLobbyPlayers } from './MlabaApi';
+import { getLobbyPlayers, joinLobby } from './MlabaApi';
+import { StorageHelper } from './Storage';
 
 type Props = {};
 class PlayerListItem extends React.PureComponent {
     _onPress = () => {
-        this.props.onPressItem(this.props.id);
+        this.props.onPressItem(this.props.player);
     };
 
     render() {
         const textColor = this.props.selected ? 'red' : 'black';
         return (
             <TouchableOpacity onPress={this._onPress}>
-                <View>
+                <View style={{alignItems: "center"}}>
                     <Text style={{ color: textColor }}>{this.props.title}</Text>
                 </View>
             </TouchableOpacity>
@@ -25,10 +26,10 @@ export default class Lobby extends Component<Props>{
         title: 'Lobby'
     };
 
-    _keyExtractor = (item, index) => item.id;
+    _keyExtractor = (item, index) => `palyer-${item.id}`;
 
-    _onPressItem = (id) => {
-        this.props.navigation.navigate("Challenge");
+    _onPressItem = (player) => {
+        this.props.navigation.navigate("Challenge", {player: player} );
     };
 
     constructor(props) {
@@ -36,13 +37,19 @@ export default class Lobby extends Component<Props>{
         this.state = { data: [] }
     }
     componentDidMount() {
+        StorageHelper.get("player").then((player => {
+            joinLobby(player.id);
+        }));
         getLobbyPlayers().then(response => {
             this.setState({ data: response })
         });
     }
+    _itemSeparator = () => (
+        <View style={{borderWidth: 1, borderColor: '#222', width: '86%', marginLeft: '7%' }}/>
+    );
     _renderItem = ({ item }) => (
         <PlayerListItem
-            id={item.id}
+            player={item}
             onPressItem={this._onPressItem}
             title={item.name}
         />
@@ -50,6 +57,7 @@ export default class Lobby extends Component<Props>{
     render() {
         return (
             <FlatList
+                ItemSeparatorComponent={this._itemSeparator}
                 data={this.state.data}
                 keyExtractor={this._keyExtractor}
                 renderItem={this._renderItem} />

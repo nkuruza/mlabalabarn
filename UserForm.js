@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import t from 'tcomb-form-native';
 import { TouchableHighlight, Text, View } from 'react-native';
 import styles from './style.js'
-import { addPlayerApi } from './MlabaApi.js';
+import { addPlayerApi, getPlayerByDevice } from './MlabaApi.js';
+import { StorageHelper} from './Storage';
 
 
 var DeviceInfo = require('react-native-device-info');
@@ -35,6 +36,18 @@ export default class UserForm extends Component<Props>{
     componentDidMount() {
         var id = DeviceInfo.default.getUniqueID();
         this.setState({ deviceId: id });
+        
+        this.checkPlayer(id);
+    }
+    checkPlayer(id){
+        getPlayerByDevice(id)
+            .then( response => {
+                //console.log(response);
+                if(response && response.id > 0){
+                    StorageHelper.put("player", response);
+                    this.props.navigation.navigate("Lobby");
+                }
+            });
     }
     onChange(value) {
         this.setState({ value: value });
@@ -42,8 +55,10 @@ export default class UserForm extends Component<Props>{
     onPress = () => {
         addPlayerApi({ name: this.state.value.name, deviceId: this.state.deviceId })
             .then(response => {
-                if (response.id > 0)
+                if (response.id > 0){
+                    StorageHelper.put("player", response);
                     this.props.navigation.navigate("Lobby");
+                }
             });
     }
     render() {
