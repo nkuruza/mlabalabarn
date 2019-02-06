@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, TouchableHighlight, Text } from 'react-native';
 import styles from './style.js'
 import { StorageHelper } from './Storage.js';
-import { challenge } from './MlabaApi.js';
+import { MlabaApi } from './MlabaApi.js';
 
 export default class Challenge extends Component<Props>{
     componentDidMount() {

@@ -1,7 +1,5 @@
 import { checkStatus } from "./apiutils";
-import {API_SERVER, API_CONFIG} from './properties';
-
-// TODO group these functions into one variable.
+import { API_SERVER, API_CONFIG } from './properties';
 
 export var MlabaApi = {
     addPlayerApi: async (player) => {
@@ -22,17 +20,16 @@ export var MlabaApi = {
             .then(response => { return response.json() })
             .catch(e => console.log(e));
     },
-    challenge = async (challenger, opponent) => {
+    challenge: async (challenger, opponent) => {
         return fetch(`${API_SERVER}/lobby/${challenger}/challenge/${opponent}`)
             .then(checkStatus)
             .then(response => { return response.json() })
             .catch(e => console.log(e));
     },
     joinLobby: async (id) => {
-        console.log(id + ' joining lobby')
         return fetch(`${API_SERVER}/lobby/join/${id}`)
             .then(checkStatus)
-            .then(response => { return response.json() })
+            .then(response => { return response })
             .catch(e => console.log(e));
     },
     getPlayerByDevice: async (deviceId) => {
@@ -42,6 +39,9 @@ export var MlabaApi = {
             .catch(e => console.log(e));
     },
     getChallenges: async (id) => {
-        return fetch(``);
+        return fetch(`${API_SERVER}/lobby/challenges/${id}`)
+            .then(checkStatus)
+            .then(response => { return response.json() })
+            .catch(e => console.log(e));
     }
 }
