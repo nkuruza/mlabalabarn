@@ -10,7 +10,7 @@ class PlayerListItem extends React.PureComponent {
     };
 
     render() {
-        const textColor = this.props.selected ? 'red' : 'black';
+        const textColor = this.props.challenge ? 'red' : 'black';
         return (
             <TouchableOpacity onPress={this._onPress}>
                 <View style={{ alignItems: "center" }}>
@@ -58,12 +58,18 @@ export default class Lobby extends Component<Props>{
             if (this.state.player) {
                 MlabaApi.getChallenges(this.state.player.id).then(challenges => {
                     console.log("challenges");
-                    console.log(challenges);
+                    this.updateChallenges(challenges);
                 });
             }
             else
                 console.log("No player :(");
         }, 10000);
+    }
+    updateChallenges(challenges){
+        let players = state.data;
+        for(player in players){
+            
+        }
     }
 
 
@@ -75,6 +81,7 @@ export default class Lobby extends Component<Props>{
             player={item}
             onPressItem={this._onPressItem}
             title={item.name}
+            challenge={item.challenge}
         />
     );
     render() {

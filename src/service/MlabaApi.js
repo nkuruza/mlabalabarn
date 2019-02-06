@@ -39,7 +39,12 @@ export var MlabaApi = {
             .catch(e => console.log(e));
     },
     getChallenges: async (id) => {
-        return fetch(`${API_SERVER}/lobby/challenges/${id}`)
+        return fetch(`${API_SERVER}/lobby/challenges/${id}`, {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
             .then(checkStatus)
             .then(response => { return response.json() })
             .catch(e => console.log(e));

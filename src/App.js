@@ -6,11 +6,11 @@
  * @flow
  */
 
-import UserForm from '../UserForm';
+import UserForm from './screens/UserForm';
 import Board from './component/Board';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import Lobby from './screens/Lobby';
-import Challenge from '../Challenge';
+import Challenge from './screens/Challenge';
 
 
 const MainNavigator = createStackNavigator({
@@ -22,4 +22,4 @@ const MainNavigator = createStackNavigator({
 
 const App = createAppContainer(MainNavigator);
 
-export default App;
+export default App; 
