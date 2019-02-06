@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, TouchableOpacity, FlatList } from 'react-native'
-import { MlabaApi } from './MlabaApi';
-import { StorageHelper } from './Storage';
+import { MlabaApi } from '../service/MlabaApi';
+import { StorageHelper } from '../service/Storage';
 
 type Props = {};
 class PlayerListItem extends React.PureComponent {

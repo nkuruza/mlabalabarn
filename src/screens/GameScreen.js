@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, StyleSheet } from 'react-native';
 import Svg,{Rect, Line, Circle} from 'react-native-svg';
-import styles from './style.js';
+import styles from '../style.js';
 
 type Props = {};
 

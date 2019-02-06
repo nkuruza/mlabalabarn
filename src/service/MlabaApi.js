@@ -1,5 +1,5 @@
-import { checkStatus } from "./apiutils";
-import { API_SERVER, API_CONFIG } from './properties';
+import { checkStatus } from "../utils/apiutils";
+import { API_SERVER, API_CONFIG } from '../properties';
 
 export var MlabaApi = {
     addPlayerApi: async (player) => {

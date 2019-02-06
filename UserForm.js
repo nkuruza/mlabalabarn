@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import t from 'tcomb-form-native';
 import { TouchableHighlight, Text, View } from 'react-native';
-import styles from './style.js'
-import { MlabaApi } from './MlabaApi.js';
-import { StorageHelper} from './Storage';
+import styles from './src/style.js'
+import { MlabaApi } from './src/service/MlabaApi.js';
+import { StorageHelper} from './src/service/Storage';
 
 
 var DeviceInfo = require('react-native-device-info');

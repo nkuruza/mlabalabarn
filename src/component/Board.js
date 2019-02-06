@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {View, StyleSheet } from 'react-native';
 import Svg,{Line, Circle, G, Text, } from 'react-native-svg';
-import styles from './style.js';
-import { getBoard } from './BoardUtils.js';
+import styles from '../style.js';
+import { getBoard } from '../utils/BoardUtils.js';
 
 const MAXPIECES = 3;
 type Props = {};
