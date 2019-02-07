@@ -3,14 +3,33 @@ import { API_SERVER, API_CONFIG } from '../properties';
 
 export var MlabaApi = {
     addPlayerApi: async (player) => {
+
         return fetch(`${API_SERVER}${API_CONFIG.addPlayer}`, {
-            method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
+            method: 'POST',
             body: JSON.stringify(player),
         }).then(checkStatus)
+            .then(response => { return response.json() })
+            .catch(e => console.log(e));
+    },
+    move: async (gameid, move) => {
+        return fetch(`${API_SERVER}/game/move/${gameid}`, {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            body: JSON.stringify(move),
+        }).then(checkStatus)
+            .then(response => { return response.json() })
+            .catch(e => console.log(e));
+    },
+    getLastMove: async (gameid) => {
+        return fetch(`${API_SERVER}/game/getLastMove/${gameid}`)
+            .then(checkStatus)
             .then(response => { return response.json() })
             .catch(e => console.log(e));
     },
@@ -22,6 +41,12 @@ export var MlabaApi = {
     },
     challenge: async (challenger, opponent) => {
         return fetch(`${API_SERVER}/lobby/${challenger}/challenge/${opponent}`)
+            .then(checkStatus)
+            .then(response => { return response.json() })
+            .catch(e => console.log(e));
+    },
+    accept: async (player, challenge) => {
+        return fetch(`${API_SERVER}/lobby/${player}/accept/${challenge}`)
             .then(checkStatus)
             .then(response => { return response.json() })
             .catch(e => console.log(e));
@@ -39,12 +64,13 @@ export var MlabaApi = {
             .catch(e => console.log(e));
     },
     getChallenges: async (id) => {
-        return fetch(`${API_SERVER}/lobby/challenges/${id}`, {
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-        })
+        return fetch(`${API_SERVER}/lobby/challenges/${id}`)
+            .then(checkStatus)
+            .then(response => { return response.json() })
+            .catch(e => console.log(e));
+    },
+    getPlayerGame: async (id) => {
+        return fetch(`${API_SERVER}/game/getPlayerGame/${id}`)
             .then(checkStatus)
             .then(response => { return response.json() })
             .catch(e => console.log(e));

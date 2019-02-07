@@ -10,7 +10,8 @@ var getPlots = (top, left, boardWidth, boardHeight) =>{
                 x: left + (j == 1 ? boardWidth / 2 : (j == 2 ? boardWidth : 0)),
                 y: top + (i == 1 ? boardHeight / 2 : (i == 2 ? boardHeight : 0)),
                 occupant:null,
-                index:{x: j, y: i}
+                index:{x: j, y: i},
+                key: `${j}-${i}`
             }
         }
     }
@@ -33,7 +34,8 @@ var getLines = plots => {
                     x2: plots[i][j + 1].x,
                     y2: plots[i][j + 1].y,
                     plot1: {x: i, y: j},
-                    plot2: {x: i, y: j + 1}
+                    plot2: {x: i, y: j + 1},
+                    key: `${i}${j}-${i}${j + 1}`
                 }
                 lines.push(line);
                 
@@ -45,7 +47,8 @@ var getLines = plots => {
                     x2: plots[i + 1][j].x,
                     y2: plots[i + 1][j].y,
                     plot1: {x: i, y: j},
-                    plot2: {x: i + 1, y: j}
+                    plot2: {x: i + 1, y: j},
+                    key: `${i}${j}-${i + 1}${j}`
                 });
             }
             if(i == 0 && j == 0)
@@ -55,7 +58,8 @@ var getLines = plots => {
                     x2: plots[i + 1][j + 1].x,
                     y2: plots[i + 1][j + 1].y,
                     plot1: {x: i, y: j},
-                    plot2: {x: i + 1, y: j + 1}
+                    plot2: {x: i + 1, y: j + 1},
+                    key: `${i}${j}-${i + 1}${j + 1}`
                 });
             if(i == 2 && j == 0)
                 lines.push({
@@ -64,7 +68,8 @@ var getLines = plots => {
                     x2: plots[i - 1][j + 1].x,
                     y2: plots[i - 1][j + 1].y,
                     plot1: {x: i, y: j},
-                    plot2: {x: i - 1, y: j + 1}
+                    plot2: {x: i - 1, y: j + 1},
+                    key: `${i}${j}-${i - 1}${j + 1}`
                 });
             if(i == 0 && j == 2)
                 lines.push({
@@ -73,7 +78,8 @@ var getLines = plots => {
                     x2: plots[i + 1][j - 1].x,
                     y2: plots[i + 1][j - 1].y,
                     plot1: {x: i, y: j},
-                    plot2: {x: i + 1, y: j - 1}
+                    plot2: {x: i + 1, y: j - 1},
+                    key: `${i}${j}-${i + 1}${j - 1}`
                 });
             if(i == 2 && j == 2)
                 lines.push({
@@ -82,7 +88,8 @@ var getLines = plots => {
                     x2: plots[i - 1][j - 1].x,
                     y2: plots[i - 1][j - 1].y,
                     plot1: {x: i, y: j},
-                    plot2: {x: i - 1, y: j - 1}
+                    plot2: {x: i - 1, y: j - 1},
+                    key: `${i}${j}-${i - 1}${j - 1}`
                 });
             
         }

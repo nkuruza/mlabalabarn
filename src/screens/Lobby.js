@@ -1,25 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, FlatList } from 'react-native'
+import { Text, View, TouchableOpacity, FlatList } from 'react-native';
 import { MlabaApi } from '../service/MlabaApi';
 import { StorageHelper } from '../service/Storage';
+import PlayerListItem from '../component/PlayerListItem';
 
 type Props = {};
-class PlayerListItem extends React.PureComponent {
-    _onPress = () => {
-        this.props.onPressItem(this.props.player);
-    };
 
-    render() {
-        const textColor = this.props.challenge ? 'red' : 'black';
-        return (
-            <TouchableOpacity onPress={this._onPress}>
-                <View style={{ alignItems: "center" }}>
-                    <Text style={{ color: textColor }}>{this.props.title}</Text>
-                </View>
-            </TouchableOpacity>
-        );
-    }
-}
 
 export default class Lobby extends Component<Props>{
     static navigationOptions = {
@@ -39,13 +25,14 @@ export default class Lobby extends Component<Props>{
     componentDidMount() {
         this.joinLobby();
         this.getLobbyPlayers();
+        this.checkGame();
         this.checkChallenges();
 
     }
     joinLobby() {
         StorageHelper.get("player").then((player => {
             this.setState({ player: player });
-            MlabaApi.joinLobby(player.id).then(response => console.log(response));
+            MlabaApi.joinLobby(player.id);
         }));
     }
     getLobbyPlayers() {
@@ -54,25 +41,47 @@ export default class Lobby extends Component<Props>{
         });
     }
     checkChallenges() {
-        this.timer = setInterval(() => {
+        this.challengeTimer = setInterval(() => {
+            //console.log(this.state.player)
             if (this.state.player) {
-                MlabaApi.getChallenges(this.state.player.id).then(challenges => {
-                    console.log("challenges");
-                    this.updateChallenges(challenges);
-                });
+                MlabaApi.getChallenges(this.state.player.id).then(challenges => this.updateChallenges(challenges));
             }
             else
                 console.log("No player :(");
         }, 10000);
     }
-    updateChallenges(challenges){
-        let players = state.data;
-        for(player in players){
-            
+    checkGame(){
+        this.gameCheckTimer = setInterval(() => {
+            if (this.state.player) {
+                console.log(this.state.player);
+                MlabaApi.getPlayerGame(this.state.player.id).then( game => {
+                    //console.log(game);
+                    if(game.id > 0){
+                        clearInterval(this.gameCheckTimer);
+                        this.props.navigation.navigate("Game", { game: game });
+                    }
+                });
+            }
+            else
+                console.log("No player :(");
+        }, 5000);
+    }
+    updateChallenges(challenges) {
+        console.log("challenges")
+        console.log(challenges)
+        if (challenges && challenges.length > 0) {
+            let players = [];
+            let challengers = [];
+
+            challenges.forEach(challenge => challengers[challenge.challenger.id] = challenge);
+            this.state.data.forEach(player => {
+                player.challenge = challengers[player.id];
+                players.push(player);
+            });
+            this.setState({ data: players });
+            clearInterval(this.challengeTimer);
         }
     }
-
-
     _itemSeparator = () => (
         <View style={{ borderWidth: 1, borderColor: '#222', width: '86%', marginLeft: '7%' }} />
     );

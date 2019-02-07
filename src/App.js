@@ -1,14 +1,6 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
-import UserForm from './screens/UserForm';
-import Board from './component/Board';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
+import UserForm from './screens/UserForm';
+import Board from './screens/Board';
 import Lobby from './screens/Lobby';
 import Challenge from './screens/Challenge';
 

@@ -12,19 +12,33 @@ export default class Challenge extends Component<Props>{
 
     }
     onPress = () => {
-        if (this.state.player.id != this.state.opponent.id)
-            MlabaApi.challenge(this.state.player.id, this.state.opponent.id)
+        if (this.state.opponent.challenge)
+            this.acceptChallenge()
         else
-            alert('can\'t challenge self')
+            this.createChallenge();
+    }
+    createChallenge() {
+        if (this.state.player.id != this.state.opponent.id)
+            MlabaApi.challenge(this.state.player.id, this.state.opponent.id);
+        else
+            alert('can\'t challenge self');
+    }
+    acceptChallenge() {
+        //console.log(this.state.opponent);
+        MlabaApi.accept(this.state.player.id, this.state.opponent.challenge.id).then(game => {
+            console.log(game);
+            if (game.id > 0)
+                this.props.navigation.navigate("Game", { game: game });
+        });
     }
     render() {
         let opponent = this.props.navigation.state.params.player;
-        console.log(this.props.navigation.state.params);
+        let text = opponent.challenge ? `You were challenged by ${opponent.name}` : `Challenge ${opponent.name}`;
         return (
             <View>
-                <Text>Challenge {opponent.name}</Text>
+                <Text style={{ fontSize: 20 }}>{text}</Text>
                 <TouchableHighlight style={styles.button} onPress={this.onPress} underlayColor='#99d9f4'>
-                    <Text style={styles.buttonText}>Challenge</Text>
+                    <Text style={styles.buttonText}>{opponent.challenge ? "Accept" : "Challenge"}</Text>
                 </TouchableHighlight>
             </View>
         )
