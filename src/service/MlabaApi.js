@@ -74,5 +74,11 @@ export var MlabaApi = {
             .then(checkStatus)
             .then(response => { return response.json() })
             .catch(e => console.log(e));
+    },
+    setWinner: async (gameId, playerId) => {
+        return fetch(`${API_SERVER}/game/${id}/setWinner/${playerId}`)
+        .then(checkStatus)
+        .then(response => { return response.json() })
+        .catch(e => console.log(e));
     }
 }

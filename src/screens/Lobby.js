@@ -48,16 +48,17 @@ export default class Lobby extends Component<Props>{
             }
             else
                 console.log("No player :(");
-        }, 10000);
+        }, 1000);
     }
     checkGame(){
         this.gameCheckTimer = setInterval(() => {
             if (this.state.player) {
-                console.log(this.state.player);
+                //console.log(this.state.player);
                 MlabaApi.getPlayerGame(this.state.player.id).then( game => {
                     //console.log(game);
                     if(game.id > 0){
                         clearInterval(this.gameCheckTimer);
+                        clearInterval(this.challengeTimer);
                         this.props.navigation.navigate("Game", { game: game });
                     }
                 });
@@ -67,8 +68,6 @@ export default class Lobby extends Component<Props>{
         }, 5000);
     }
     updateChallenges(challenges) {
-        console.log("challenges")
-        console.log(challenges)
         if (challenges && challenges.length > 0) {
             let players = [];
             let challengers = [];
@@ -79,6 +78,7 @@ export default class Lobby extends Component<Props>{
                 players.push(player);
             });
             this.setState({ data: players });
+            clearInterval(this.gameCheckTimer);
             clearInterval(this.challengeTimer);
         }
     }

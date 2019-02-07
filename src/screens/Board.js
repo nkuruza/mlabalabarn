@@ -26,24 +26,24 @@ export default class Board extends Component<Props>{
 
     }
     checkMoves() {
-        console.log("Checking moves")
         var { game, board } = this.state;
         this.moveTimer = setInterval(() => {
             MlabaApi.getLastMove(game.id).then(res => {
-                console.log(res);
+                //console.log(res);
                 //console.log(board);
 
                 if ((game.moves.length == 0 && res.id > 0) || (game.moves.length > 0 && res.id > 0 && game.moves[game.moves.length - 1].id != res.id)) {
                     if (res.srcx == null) {
                         game.moves.push(res);
-                        console.log
                         board.plots[res.dsty][res.dstx].occupant = {
                             player: this.player1 ? 1 : 0,
                             selected: false
                         }
+                        if(this.checkForGun(this.player1 ? 1 : 0)){
+                            alert("You lose, you piece of shit");
+                        }
                     }
                     else {
-                        console.log("Moving opponent")
                         this.moveOpponent(res);
                     }
                     this.setState({ game: game, board: board });
@@ -67,42 +67,42 @@ export default class Board extends Component<Props>{
         }
         return undefined;
     }
-    checkForGun() {
-
+    checkForGun(player) {
+        console.log(`cheking gun for player ${player}`);
         var peices = [];
-        var { board, hand } = this.state;
-        if (MAXPIECES - hand < 3) return;
+        var { board, hand, game } = this.state;
+        //console.log(`${MAXPIECES - hand < 3} - ${hand}`)
+        //if (MAXPIECES - hand < 3) return;
+        if(game.moves.length < 5) return;
         console.log(board)
         for (i = 0; i < board.plots.length; i++) {
             for (j = 0; j < board.plots[i].length; j++) {
-                if (board.plots[i][j].occupant && board.plots[i][j].occupant.player == 1) {
+                if (board.plots[i][j].occupant && board.plots[i][j].occupant.player == player) {
                     peices.push(board.plots[i][j].index);
                 }
             }
         }
-        console.log(peices)
+        console.log(peices);
         if (peices[0].x == peices[1].x && peices[0].x == peices[2].x) {
-            console.log("Guuuuuun");
+            return true;
         }
         if (peices[0].y == peices[1].y && peices[0].y == peices[2].y) {
-            console.log("Guuuuuun");
+            return true;
         }
         if (peices[0].y == peices[0].x && peices[1].y == peices[1].x && peices[2].y == peices[2].x) {
-            console.log("Guuuuuun");
+            return true;
         }
         if (peices[0].y == peices[2].x && peices[1].y == peices[1].x && peices[2].y == peices[0].x) {
-            console.log("Guuuuuun");
+            return true;
         }
     }
     onPressSpot(x, y) {
         if (!this.isMyTurn())
             return;
-        var { board, hand, selected, game } = this.state;
+        var { board, hand, selected, game, player } = this.state;
         if (!selected) {
             const move = { dstx: x, dsty: y };
             MlabaApi.move(this.state.game.id, move).then(res => {
-
-
                 if (!board.plots[y][x].occupant && hand > 0) {
                     game.moves.push(res);
                     board.plots[y][x].occupant = {
@@ -110,17 +110,23 @@ export default class Board extends Component<Props>{
                         selected: false
                     }
                     hand--;
+                    this.setState({ board: board, hand: hand, game: game });
+                    this.checkMoves();
+                    if(this.checkForGun(this.player1 ? 0 : 1)){
+                        this.setWinner(game.id, player.id);
+                    }
                 }
-                this.setState({ board: board, hand: hand, game: game });
-                this.checkMoves();
-
-
             });
         }
         else
             this.move(x, y);
-        this.checkForGun();
 
+    }
+    setWinner(gameId, playerId){
+        alert("You win :-)");
+        MlabaApi.setWinner(gameId, playerId).then( () =>{
+             
+        });
     }
     isMyTurn() {
         let moveCount = this.state.game.moves.length;
@@ -131,12 +137,13 @@ export default class Board extends Component<Props>{
 
         game.moves.push(move);
         let occupant = board.plots[move.srcy][move.srcx].occupant;
-        console.log("occupant");
-        console.log(occupant);
         //occupant.selected = false;
         board.plots[move.srcy][move.srcx].occupant = null;
         board.plots[move.dsty][move.dstx].occupant = occupant;
         this.setState({ board: board, selected: undefined });
+        if(this.checkForGun(this.player1 ? 1 : 0)){
+            alert("You lose, you piece of shit");
+        }
 
     }
     move(x, y) {
@@ -151,6 +158,10 @@ export default class Board extends Component<Props>{
                     board.plots[selected.y][selected.x].occupant = null;
                     board.plots[y][x].occupant = occupant;
                     this.setState({ board: board, selected: undefined });
+                    this.checkMoves();
+                    if(this.checkForGun(this.player1 ? 0 : 1)){
+                        this.setWinner(game.id, player.id);
+                    }
                 }
             });
         }
