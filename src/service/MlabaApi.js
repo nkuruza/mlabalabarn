@@ -30,7 +30,7 @@ export var MlabaApi = {
     getLastMove: async (gameid) => {
         return fetch(`${API_SERVER}/game/getLastMove/${gameid}`)
             .then(checkStatus)
-            .then(response => { return response.json() })
+            .then(response => { return response ? response.json() : null })
             .catch(e => console.log(e));
     },
     getLobbyPlayers: async () => {
@@ -76,7 +76,7 @@ export var MlabaApi = {
             .catch(e => console.log(e));
     },
     setWinner: async (gameId, playerId) => {
-        return fetch(`${API_SERVER}/game/${id}/setWinner/${playerId}`)
+        return fetch(`${API_SERVER}/game/${gameId}/set/winner/${playerId}`)
         .then(checkStatus)
         .then(response => { return response.json() })
         .catch(e => console.log(e));

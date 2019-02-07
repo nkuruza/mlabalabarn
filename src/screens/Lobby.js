@@ -23,12 +23,16 @@ export default class Lobby extends Component<Props>{
         this.state = { data: [] }
     }
     componentDidMount() {
+        this.refresh();
+    }
+
+    refresh(){
         this.joinLobby();
         this.getLobbyPlayers();
         this.checkGame();
         this.checkChallenges();
-
     }
+
     joinLobby() {
         StorageHelper.get("player").then((player => {
             this.setState({ player: player });
@@ -42,7 +46,6 @@ export default class Lobby extends Component<Props>{
     }
     checkChallenges() {
         this.challengeTimer = setInterval(() => {
-            //console.log(this.state.player)
             if (this.state.player) {
                 MlabaApi.getChallenges(this.state.player.id).then(challenges => this.updateChallenges(challenges));
             }
@@ -59,7 +62,7 @@ export default class Lobby extends Component<Props>{
                     if(game.id > 0){
                         clearInterval(this.gameCheckTimer);
                         clearInterval(this.challengeTimer);
-                        this.props.navigation.navigate("Game", { game: game });
+                        this.props.navigation.navigate("Game", { game: game, onGoBack: () => this.refresh() });
                     }
                 });
             }

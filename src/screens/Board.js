@@ -23,15 +23,23 @@ export default class Board extends Component<Props>{
         this.onPressSpot = this.onPressSpot.bind(this)
     }
     componentDidMount() {
-
+        let game = this.props.navigation.state.params.game;
+        this.setState({game: game});
+        StorageHelper.get("player").then((player => {
+            this.setState({ player: player });
+            this.player1 = player.id == game.player1.id;
+        }));
     }
+    
     checkMoves() {
         var { game, board } = this.state;
         this.moveTimer = setInterval(() => {
             MlabaApi.getLastMove(game.id).then(res => {
-                //console.log(res);
-                //console.log(board);
-
+                if (!res){
+                    this.props.navigation.state.params.onGoBack();
+                    this.props.navigation.goBack();;
+                }
+                    
                 if ((game.moves.length == 0 && res.id > 0) || (game.moves.length > 0 && res.id > 0 && game.moves[game.moves.length - 1].id != res.id)) {
                     if (res.srcx == null) {
                         game.moves.push(res);
@@ -39,7 +47,7 @@ export default class Board extends Component<Props>{
                             player: this.player1 ? 1 : 0,
                             selected: false
                         }
-                        if(this.checkForGun(this.player1 ? 1 : 0)){
+                        if (this.checkForGun(this.player1 ? 1 : 0)) {
                             alert("You lose, you piece of shit");
                         }
                     }
@@ -53,13 +61,9 @@ export default class Board extends Component<Props>{
             })
         }, 1000);
     }
-    onChange(value) {
-        this.setState({ value: value });
-    }
     findLine(lines, plot1, plot2) {
 
         for (line of lines) {
-            //console.log(line)
             if ((line.plot1.x == plot1.index.x && line.plot1.y == plot1.index.y && line.plot2.x == plot2.index.x && line.plot2.y == plot2.index.y) ||
                 (line.plot1.x == plot2.index.x && line.plot1.y == plot2.index.y && line.plot2.x == plot1.index.x && line.plot2.y == plot1.index.y)) {
                 return line;
@@ -68,13 +72,10 @@ export default class Board extends Component<Props>{
         return undefined;
     }
     checkForGun(player) {
-        console.log(`cheking gun for player ${player}`);
         var peices = [];
-        var { board, hand, game } = this.state;
-        //console.log(`${MAXPIECES - hand < 3} - ${hand}`)
-        //if (MAXPIECES - hand < 3) return;
-        if(game.moves.length < 5) return;
-        console.log(board)
+        var { board, game } = this.state;
+        if (game.moves.length < 5) return;
+
         for (i = 0; i < board.plots.length; i++) {
             for (j = 0; j < board.plots[i].length; j++) {
                 if (board.plots[i][j].occupant && board.plots[i][j].occupant.player == player) {
@@ -82,19 +83,10 @@ export default class Board extends Component<Props>{
                 }
             }
         }
-        console.log(peices);
-        if (peices[0].x == peices[1].x && peices[0].x == peices[2].x) {
-            return true;
-        }
-        if (peices[0].y == peices[1].y && peices[0].y == peices[2].y) {
-            return true;
-        }
-        if (peices[0].y == peices[0].x && peices[1].y == peices[1].x && peices[2].y == peices[2].x) {
-            return true;
-        }
-        if (peices[0].y == peices[2].x && peices[1].y == peices[1].x && peices[2].y == peices[0].x) {
-            return true;
-        }
+        return (peices[0].x == peices[1].x && peices[0].x == peices[2].x) ||
+            (peices[0].y == peices[1].y && peices[0].y == peices[2].y) ||
+            (peices[0].y == peices[0].x && peices[1].y == peices[1].x && peices[2].y == peices[2].x) ||
+            (peices[0].y == peices[2].x && peices[1].y == peices[1].x && peices[2].y == peices[0].x);
     }
     onPressSpot(x, y) {
         if (!this.isMyTurn())
@@ -112,7 +104,7 @@ export default class Board extends Component<Props>{
                     hand--;
                     this.setState({ board: board, hand: hand, game: game });
                     this.checkMoves();
-                    if(this.checkForGun(this.player1 ? 0 : 1)){
+                    if (this.checkForGun(this.player1 ? 0 : 1)) {
                         this.setWinner(game.id, player.id);
                     }
                 }
@@ -122,10 +114,10 @@ export default class Board extends Component<Props>{
             this.move(x, y);
 
     }
-    setWinner(gameId, playerId){
+    setWinner(gameId, playerId) {
         alert("You win :-)");
-        MlabaApi.setWinner(gameId, playerId).then( () =>{
-             
+        MlabaApi.setWinner(gameId, playerId).then(() => {
+
         });
     }
     isMyTurn() {
@@ -141,7 +133,7 @@ export default class Board extends Component<Props>{
         board.plots[move.srcy][move.srcx].occupant = null;
         board.plots[move.dsty][move.dstx].occupant = occupant;
         this.setState({ board: board, selected: undefined });
-        if(this.checkForGun(this.player1 ? 1 : 0)){
+        if (this.checkForGun(this.player1 ? 1 : 0)) {
             alert("You lose, you piece of shit");
         }
 
@@ -159,7 +151,7 @@ export default class Board extends Component<Props>{
                     board.plots[y][x].occupant = occupant;
                     this.setState({ board: board, selected: undefined });
                     this.checkMoves();
-                    if(this.checkForGun(this.player1 ? 0 : 1)){
+                    if (this.checkForGun(this.player1 ? 0 : 1)) {
                         this.setWinner(game.id, player.id);
                     }
                 }
@@ -181,12 +173,13 @@ export default class Board extends Component<Props>{
     onLayout = event => {
         if (this.state.dimensions) return // layout was already called
         let { width, height } = event.nativeEvent.layout
-        this.setState({ dimensions: { width, height }, board: getBoard({ width, height }) });
+        let {game} = this.state;
+        this.setState({ dimensions: { width, height }, board: getBoard({ width, height }), game: game });
 
-        let game = this.props.navigation.state.params.game;
+        
 
         StorageHelper.get("player").then((player => {
-            this.setState({ player: player, game: game });
+            this.setState({ player: player });
             this.player1 = player.id == game.player1.id;
             if (!this.isMyTurn())
                 this.checkMoves();
