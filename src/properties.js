@@ -1,4 +1,4 @@
-export var API_SERVER = 'http://10.0.2.2:8080';
+export var API_SERVER = 'http://192.168.0.155:8080';
 
 export var API_CONFIG = {
     addPlayer : '/player/add',
